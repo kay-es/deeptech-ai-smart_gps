@@ -8,7 +8,7 @@ from torch.autograd import Variable
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence, pack_sequence, pad_sequence
 
 # READ DATA AND DEFINE SOME SIZES
-training_data = torch.load('traindata.pt')
+training_data = torch.load('traindata_backup.pt')
 input_size = 3
 hidden_size = 10
 n_batches = len(training_data)

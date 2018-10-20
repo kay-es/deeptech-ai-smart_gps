@@ -5,7 +5,7 @@ import torch
 
 item_history = "trumpfdata/logistik/itemshistory.tsv"
 areas = "trumpfdata/logistik/areas.tsv"
-file_position_history = "trumpfdata/logistik/position_history_new_starts_at_01.07.2018.tsv"
+file_position_history = "trumpfdata/logistik/positions_new.tsv"
 
 myfile_path = "trumpfdata/logistik/data.csv"
 marker_ids = []
@@ -57,16 +57,16 @@ with codecs.open(item_history, "r", encoding='utf-8', errors='ignore') as tsvfil
         # GET ALL POSITIONS AS BATCHES FOR EACH PROCESS
 
         with codecs.open(file_position_history, "r", encoding='utf-8', errors='ignore') as posfile:
-            pos_reader = csv.reader(posfile, delimiter='\t')
+            pos_reader = csv.reader(posfile, delimiter=',')
 
             if(processes != []):
-                print(processes)
+                #print(processes)
                 positions = []
                 for pot_position in pos_reader:
-                    if pot_position[1] == marker_id: # marker
+                    if (float(pot_position[1])) == float(marker_id): # marker
                         positions.append(pot_position)
 
-                print(positions)
+                #print(positions)
 
 
                 # NEUEN BATCH FÜR JEDES TRAINING_DATA INKL ALLE POSITIONS
@@ -81,18 +81,17 @@ with codecs.open(item_history, "r", encoding='utf-8', errors='ignore') as tsvfil
                                 #new_train[2] = float(p[6])
                                 # ADD AREA HERE AS new_train[2]
                                 #print(new_train, "NEW_TRAIN")
-                                print(p[5])
+                                #print(p[5])
+                                print(new_train)
                                 batch.append(new_train)
                         if len(batch) != 0 and batch != []:
                             global_data.append(batch)
 
 
 
-        print(k/len(marker_ids) * 100, "%")
-        torch.save(global_data, open('traindata.pt', 'wb'))
-        if k > 2:
-            final_array = np.array(global_data)
-            torch.save(global_data, open('traindata.pt', 'wb'))
-            #with open('your_file.txt', 'w') as f:
-             #   f.write("%s\n" % output)
+        print(k/10 * 100, "%")
+        print(global_data)
+        torch.save(global_data, open('traindata_backup.pt', 'wb'))
+
+        if k > 10:
             break
