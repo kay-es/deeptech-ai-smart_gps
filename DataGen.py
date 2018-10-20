@@ -41,7 +41,7 @@ with codecs.open(item_history, "r", encoding='utf-8', errors='ignore') as tsvfil
         # CALCULATE START AND END
         processes = []
         for i, row in enumerate(rows):
-            train = [None] * 5
+            train = [-1] * 5
             if row[1] != "":
                 train[3] = float(row[2]) # START
                 try:
@@ -49,7 +49,7 @@ with codecs.open(item_history, "r", encoding='utf-8', errors='ignore') as tsvfil
                         train[4] = float(rows[i + 1][2]) # END
                 except IndexError:
                     gotdata = 'null'
-                if(train[4] != None):
+                if(train[4] != -1):
                     processes.append(train)
 
         # END DUMMY BATCHES
@@ -72,7 +72,7 @@ with codecs.open(item_history, "r", encoding='utf-8', errors='ignore') as tsvfil
                 # NEUEN BATCH FÜR JEDES TRAINING_DATA INKL ALLE POSITIONS
                 for train in processes:
                     batch = []
-                    if train[4] != None:
+                    if train[4] != -1:
                         for p in positions:
                             if float(p[5]) >= train[3] and float(p[5]) <= train[4]:
                                 new_train = train.copy()
@@ -83,15 +83,16 @@ with codecs.open(item_history, "r", encoding='utf-8', errors='ignore') as tsvfil
                                 #print(new_train, "NEW_TRAIN")
                                 print(p[5])
                                 batch.append(new_train)
-                        global_data.append(batch)
+                        if len(batch) != 0 and batch != []:
+                            global_data.append(batch)
 
 
-        if len(global_data) != 0:
-            output = np.append(output, np.array(global_data))
-            #print(output, "output")
 
+        print(k/len(marker_ids) * 100, "%")
+        torch.save(global_data, open('traindata.pt', 'wb'))
         if k > 2:
-            torch.save(output, open('traindata.pt', 'wb'))
+            final_array = np.array(global_data)
+            torch.save(global_data, open('traindata.pt', 'wb'))
             #with open('your_file.txt', 'w') as f:
              #   f.write("%s\n" % output)
             break
