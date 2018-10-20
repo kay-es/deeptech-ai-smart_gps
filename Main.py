@@ -1,6 +1,7 @@
+import codecs
 import csv
 
-with open("tsv.tsv") as tsvfile:
-    tsvreader = csv.reader(tsvfile, delimiter="\t")
-    for line in tsvreader:
-        print line[1:]
+with codecs.open("trumpfdata/logistik/areas.tsv", "r", encoding='utf-8', errors='ignore') as tsvfile:
+    reader = csv.reader(tsvfile, delimiter='\t')
+    for row in reader:
+        print(row)
