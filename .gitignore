@@ -1,3 +1,5 @@
 trumpfdata/
 .idea/
 __pycache__/
+.idea/workspace.xml
+.DS_Store
