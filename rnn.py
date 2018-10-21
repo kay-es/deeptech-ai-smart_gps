@@ -2,11 +2,8 @@ import torch
 import os
 import torch.nn as nn
 import torch.optim as optim
-import numpy as np
-import npdata
 from torch.autograd import Variable
-from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence, pack_sequence, pad_sequence
-import math
+from torch.nn.utils.rnn import pad_packed_sequence, pack_sequence
 
 training = False
 
@@ -38,11 +35,12 @@ class Model(nn.Module):
 # INIT MODEL FROM SCRATCH OR EXISTING
 net_available = False
 model = None
-if (os.path.isfile("model.pt")):
+if os.path.isfile("model.pt"):
     model = torch.load("model.pt")
     net_available = True
 else:
     model = Model()
+
 
 def test():
     sorted_test_data = sorted(test_data, key=getLen, reverse=True)
@@ -73,9 +71,11 @@ def test():
 optimizer = optim.SGD(model.parameters(), lr=0.1, momentum=0.8)
 criterion = nn.MSELoss()
 
+
 # just for sorting
 def getLen(item):
     return len(item)
+
 
 # PREPARE DATA FOR TRAINING
 sorted_data = sorted(training_data, key=getLen, reverse=True)
