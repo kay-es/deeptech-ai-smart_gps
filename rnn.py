@@ -11,8 +11,12 @@ import math
 training = False
 
 # READ DATA AND DEFINE SOME SIZES
+<<<<<<< HEAD
 training_data = torch.load('traindata.pt')
 test_data = torch.load('traindata.pt')
+=======
+training_data = torch.load('traindata_backup.pt')
+>>>>>>> 173adfa7c1f807ca10fd4143a8725ba0f96dc8e7
 input_size = 3
 hidden_size = 10
 n_batches = len(training_data)
