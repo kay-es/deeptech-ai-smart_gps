@@ -2,30 +2,24 @@ import codecs
 import csv
 import numpy as np
 import torch
-
 item_history = "trumpfdata/logistik/itemshistory.tsv"
 areas = "trumpfdata/logistik/areas.tsv"
 file_position_history = "trumpfdata/logistik/positions_new.tsv"
-
 myfile_path = "trumpfdata/logistik/data.csv"
+
 marker_ids = []
 with codecs.open(item_history, "r", encoding='utf-8', errors='ignore') as tsvfile:
     reader = list(csv.reader(tsvfile, delimiter='\t'))
 
-
     # GET ALL MARKERS
-
     for row in reader:
         if row[3] != "-1" and row[3] != "address":
             marker_ids.append(row[3])
 
     marker_ids = np.unique(marker_ids)
-
     # END GET ALL MARKERS
 
-    ############################################
     # FOR LOOP OVER ALL MARKER IDS
-
     global_data = []
     output = []
     for k, marker_id in enumerate(marker_ids):
@@ -55,19 +49,14 @@ with codecs.open(item_history, "r", encoding='utf-8', errors='ignore') as tsvfil
         # END DUMMY BATCHES
 
         # GET ALL POSITIONS AS BATCHES FOR EACH PROCESS
-
         with codecs.open(file_position_history, "r", encoding='utf-8', errors='ignore') as posfile:
             pos_reader = csv.reader(posfile, delimiter=',')
 
             if(processes != []):
-                #print(processes)
                 positions = []
                 for pot_position in pos_reader:
                     if (float(pot_position[1])) == float(marker_id): # marker
                         positions.append(pot_position)
-
-                #print(positions)
-
 
                 # NEUEN BATCH FÜR JEDES TRAINING_DATA INKL ALLE POSITIONS
                 for train in processes:
@@ -78,20 +67,11 @@ with codecs.open(item_history, "r", encoding='utf-8', errors='ignore') as tsvfil
                                 new_train = train.copy()
                                 new_train[1] = float(p[5])
                                 new_train[0] = float(p[1])
-                                #new_train[2] = float(p[6])
-                                # ADD AREA HERE AS new_train[2]
-                                #print(new_train, "NEW_TRAIN")
-                                #print(p[5])
-                                print(new_train)
                                 batch.append(new_train)
                         if len(batch) != 0 and batch != []:
                             global_data.append(batch)
 
 
 
-        print(k/10 * 100, "%")
-        print(global_data)
-        torch.save(global_data, open('traindata_backup.pt', 'wb'))
-
-        if k > 10:
-            break
+        print(k/len(marker_ids) * 100, "%")
+        torch.save(global_data, open('traindata.pt', 'wb'))
