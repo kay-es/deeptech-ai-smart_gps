@@ -22,7 +22,7 @@ class Model(nn.Module):
     def __init__(self):
         super(Model, self).__init__()
         # RNN with LSTM and Linear activation function for regression
-        self.lstm = nn.LSTM(input_size, hidden_size, 3)
+        self.lstm = nn.LSTM(input_size, hidden_size, 2)
         self.linear = nn.Linear(hidden_size, 1) # 1 output for regression
 
     def forward(self, input_seq):
