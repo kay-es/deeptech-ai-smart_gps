@@ -67,10 +67,10 @@ with codecs.open(item_history, "r", encoding='utf-8', errors='ignore') as tsvfil
                                 new_train = train.copy()
                                 new_train[1] = float(p[5])
                                 new_train[0] = float(p[1])
+                                new_train[2] = float(p[6])
                                 batch.append(new_train)
                         if len(batch) != 0 and batch != []:
                             global_data.append(batch)
-
 
 
         print(k/len(marker_ids) * 100, "%")

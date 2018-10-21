@@ -8,11 +8,14 @@ from torch.autograd import Variable
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence, pack_sequence, pad_sequence
 import math
 
-training = False
+training = True
 
 # READ DATA AND DEFINE SOME SIZES
-training_data = torch.load('traindata.pt')
-test_data = torch.load('traindata.pt')
+data = torch.load('traindata.pt')
+data_size = len(data)
+split_index = int(data_size * 0.8)
+training_data = data[:split_index]
+test_data = data[split_index:]
 
 input_size = 3
 hidden_size = 10
@@ -90,9 +93,11 @@ batches, dimensions = pad_packed_sequence(packed_data)
 
 # TRAINING OR TEST
 if training:
+    print("Start Training...")
     for i in range(len(sorted_data)):
-        for _ in range(20):
-
+        print("Process: ", i, " of ", len(sorted_data))
+        for k in range(20):
+            print("Epoche: ", k , " of ", 20)
             # INPUT DATA FOR NEURONS
             batch = batches[:, i:i+1]
             input_seq = Variable(batch).float()
