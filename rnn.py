@@ -8,7 +8,7 @@ from torch.autograd import Variable
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence, pack_sequence, pad_sequence
 import math
 
-training = True
+training = False
 
 # READ DATA AND DEFINE SOME SIZES
 data = torch.load('traindata.pt')
@@ -45,7 +45,7 @@ else:
     model = Model()
 
 def test():
-    sorted_test_data = sorted(training_data, key=getLen, reverse=True)
+    sorted_test_data = sorted(test_data, key=getLen, reverse=True)
     prepared_test_data = [[seq[1:4] for seq in x] for x in sorted_test_data]
     packed_test_data = pack_sequence([torch.tensor(x) for x in prepared_test_data])
 
@@ -54,23 +54,19 @@ def test():
     test_batches, test_dimensions = pad_packed_sequence(packed_test_data)
 
     model.eval() # Modell auf Test umstellen und Gewichte einfrieren
-    loss = 0
-    correct = 0
-    for i in range(len(sorted_data)):
+    test_loss = 0
+    for i in range(len(sorted_test_data)):
         # INPUT DATA FOR NEURONS
         test_batch = test_batches[:, i:i+1]
         test_input_seq = Variable(test_batch).float()
         test_target = Variable(torch.tensor([prepared_test_targets[i][0]])).float()
-
         # FORWARD PASS
         test_output = model(test_input_seq)
         l = criterion(test_output, test_target.float())
-        loss += l
-        correct += math.sqrt(l)
-    loss /= len(test_data)
-    correct /= len(test_data)
-    print('Durchschnittsloss: ', loss.item())
-    #print('Genauigkeit: ', 100.*correct)
+        print(l.item())
+        test_loss += l
+    test_loss /= len(test_data)
+    print('Durchschnittsloss: ', test_loss.item())
 
 
 # Hyperparams
@@ -90,14 +86,14 @@ prepared_targets = [[seq[4:5] for seq in x] for x in sorted_data]
 max_size = len(sorted_data[0])
 
 batches, dimensions = pad_packed_sequence(packed_data)
-
+epochs = 30
 # TRAINING OR TEST
 if training:
     print("Start Training...")
-    for i in range(len(sorted_data)):
-        print("Process: ", i, " of ", len(sorted_data))
-        for k in range(20):
-            print("Epoche: ", k , " of ", 20)
+    for k in range(epochs):
+        print("Epoch: ", k, " of ", epochs)
+        for i in range(len(sorted_data)):
+            print("Process: ", i, " of ", len(sorted_data))
             # INPUT DATA FOR NEURONS
             batch = batches[:, i:i+1]
             input_seq = Variable(batch).float()
