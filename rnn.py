@@ -5,7 +5,7 @@ import torch.optim as optim
 from torch.autograd import Variable
 from torch.nn.utils.rnn import pad_packed_sequence, pack_sequence
 
-training = True
+training = False
 
 # READ DATA AND DEFINE SOME SIZES
 data = torch.load('traindata.pt')
@@ -61,7 +61,8 @@ def test():
         # FORWARD PASS
         test_output = model(test_input_seq)
         l = criterion(test_output, test_target.float())
-        print("prediction: ", test_output.item(), "; target: ", test_target.item(), "; loss: ", l.item())
+        diff = test_output.item() - test_target.item()
+        print("prediction: ", test_output.item(), "; target: ", test_target.item(), "; loss: ", l.item(), "; Abstand in h: ", (diff / 1000 / 60 / 60))
         test_loss += l
     test_loss /= len(test_data)
     print('Durchschnittsloss: ', test_loss.item())
