@@ -5,7 +5,7 @@ import torch.optim as optim
 from torch.autograd import Variable
 from torch.nn.utils.rnn import pad_packed_sequence, pack_sequence
 
-training = False
+training = True
 
 # READ DATA AND DEFINE SOME SIZES
 data = torch.load('traindata.pt')
@@ -22,7 +22,7 @@ class Model(nn.Module):
     def __init__(self):
         super(Model, self).__init__()
         # RNN with LSTM and Linear activation function for regression
-        self.lstm = nn.LSTM(input_size, hidden_size, 2)
+        self.lstm = nn.LSTM(input_size, hidden_size, 3)
         self.linear = nn.Linear(hidden_size, 1) # 1 output for regression
 
     def forward(self, input_seq):
@@ -61,7 +61,7 @@ def test():
         # FORWARD PASS
         test_output = model(test_input_seq)
         l = criterion(test_output, test_target.float())
-        print(l.item())
+        print("prediction: ", test_output.item(), "; target: ", test_target.item(), "; loss: ", l.item())
         test_loss += l
     test_loss /= len(test_data)
     print('Durchschnittsloss: ', test_loss.item())
