@@ -7,12 +7,22 @@ from torch.nn.utils.rnn import pad_packed_sequence, pack_sequence
 
 training = True
 
+if training:
+    print("test mode")
+else:
+    print("test mode")
+
+
+print()
+
 # READ DATA AND DEFINE SOME SIZES
-data = torch.load('traindata.pt')
+data = torch.load('data.pt')
 data_size = len(data)
 split_index = int(data_size * 0.8)
 training_data = data[:split_index]
 test_data = data[split_index:]
+training_data = test_data
+
 
 input_size = 3
 hidden_size = 10
@@ -61,7 +71,8 @@ def test():
         # FORWARD PASS
         test_output = model(test_input_seq)
         l = criterion(test_output, test_target.float())
-        print("prediction: ", test_output.item(), "; target: ", test_target.item(), "; loss: ", l.item())
+        diff = test_output.item() - test_target.item()
+        print("prediction: ", output.item(), "target: ", test_target.item(), "; loss (MSE): ", l.item(), ";\t Differenz in h: ", (diff / 1000 / 60 / 60))
         test_loss += l
     test_loss /= len(test_data)
     print('Durchschnittsloss: ', test_loss.item())
@@ -89,11 +100,8 @@ batches, dimensions = pad_packed_sequence(packed_data)
 epochs = 30
 # TRAINING OR TEST
 if training:
-    print("Start Training...")
     for k in range(epochs):
-        print("Epoch: ", k, " of ", epochs)
         for i in range(len(sorted_data)):
-            print("Process: ", i, " of ", len(sorted_data))
             # INPUT DATA FOR NEURONS
             batch = batches[:, i:i+1]
             input_seq = Variable(batch).float()
@@ -107,7 +115,8 @@ if training:
             # BACKPROPAGATION AND UPDATE WEIGHTS
             optimizer.zero_grad()
             loss.backward()
-            print("prediction: ", output.item(), "; target: ", target.item(), "; loss: ", loss.item())
+            diff = output.item() - target.item()
+            print("prediction: ", output.item(), "; target: ", target.item(), "; loss: ", loss.item(), ";\t Differenz in h: ", (diff / 1000 / 60 / 60))
             optimizer.step()
 
             #save model after every update
